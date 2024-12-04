@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class and Teacher Scheduling System</title>
+    <style>
+        /* Global styles */
+        body {
+            font-family: 'Georgia', serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #4a148c, #7b1fa2);
+            color: #fff;
+        }
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: #f5f5f5;
+            color: #4a148c;
+            padding: 30px 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        h1, h2 {
+            text-align: center;
+            font-family: 'Garamond', serif;
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: gold;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+        }
+        h2 {
+            color: #4a148c;
+            font-size: 1.8rem;
+            margin-top: 30px;
+        }
+
+        /* Form styles */
+        form {
+            margin: 20px 0;
+            padding: 20px;
+            background: #fff;
+            border: 2px solid gold;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        label {
+            font-weight: bold;
+            font-size: 1rem;
+            margin-bottom: 5px;
+            display: block;
+            color: #4a148c;
+        }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0 15px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        button {
+            display: inline-block;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            background: gold;
+            color: #4a148c;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        button:hover {
+            background: #fbc02d;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Table styles */
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+            border: 2px solid gold;
+            overflow: hidden;
+            border-radius: 10px;
+            background: #fff;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+            color: #4a148c;
+        }
+        th {
+            background: #4a148c;
+            color: gold;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background: #f3f3f3;
+        }
+        tr:hover {
+            background: #ffe4b2;
+        }
+
+        /* Login screen styles */
+        #loginScreen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.7);
+        }
+        #mainContent {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen">
+        <div class="container">
+            <h1>Login</h1>
+            <form id="loginForm">
+                <label for="username">Username:</label>
+                <input type="text" id="username" required>
+                <label for="password">Password:</label>
+                <input type="password" id="password" required>
+                <button type="button" onclick="login()">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="mainContent" class="container">
+        <h1>Royal Class Scheduling System</h1>
+
+        <button onclick="logout()" style="float: right;">Logout</button>
+
+        <!-- Create Class Schedule Form -->
+        <h2>Create a Class Schedule</h2>
+        <form id="classScheduleForm">
+            <label for="className">Class Name:</label>
+            <input type="text" id="className" name="className" required>
+
+            <label for="classTime">Time (e.g., 9:00 AM - 10:00 AM):</label>
+            <input type="text" id="classTime" name="classTime" required>
+
+            <label for="classDay">Day:</label>
+            <input type="text" id="classDay" name="classDay" required>
+
+            <button type="button" onclick="addClassSchedule()">Add Schedule</button>
+        </form>
+
+        <!-- Assign Teacher to Class Form -->
+        <h2>Assign Teachers to Classes</h2>
+        <form id="teacherAssignmentForm">
+            <label for="teacherName">Teacher Name:</label>
+            <input type="text" id="teacherName" name="teacherName" required>
+
+            <label for="assignClass">Assign to Class:</label>
+            <input type="text" id="assignClass" name="assignClass" required>
+
+            <button type="button" onclick="assignTeacher()">Assign Teacher</button>
+        </form>
+
+        <!-- View Schedules Table -->
+        <h2>View Schedules</h2>
+        <table id="scheduleTable">
+            <tr>
+                <th>Class Name</th>
+                <th>Time</th>
+                <th>Day</th>
+                <th>Assigned Teacher</th>
+            </tr>
+        </table>
+    </div>
+
+    <script>
+        const scheduleTable = document.getElementById("scheduleTable");
+        const loginScreen = document.getElementById("loginScreen");
+        const mainContent = document.getElementById("mainContent");
+
+        // Simulated database
+        const schedules = [];
+
+        // Login function
+        function login() {
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+
+            if (username === "Admin" && password === "admin123") {
+                loginScreen.style.display = "none";
+                mainContent.style.display = "block";
+            } else {
+                alert("Invalid username or password. Try again.");
+            }
+        }
+
+        // Logout function
+        function logout() {
+            mainContent.style.display = "none";
+            loginScreen.style.display = "flex";
+            document.getElementById("loginForm").reset();
+        }
+
+        // Add class schedule
+        function addClassSchedule() {
+            const className = document.getElementById("className").value;
+            const classTime = document.getElementById("classTime").value;
+            const classDay = document.getElementById("classDay").value;
+
+            const schedule = {
+                className,
+                classTime,
+                classDay,
+                teacher: "Not Assigned"
+            };
+
+            schedules.push(schedule);
+
+            // Update table
+            const row = scheduleTable.insertRow();
+            row.insertCell(0).textContent = schedule.className;
+            row.insertCell(1).textContent = schedule.classTime;
+            row.insertCell(2).textContent = schedule.classDay;
+            row.insertCell(3).textContent = schedule.teacher;
+
+            document.getElementById("classScheduleForm").reset();
+        }
+
+        // Assign teacher
+        function assignTeacher() {
+            const teacherName = document.getElementById("teacherName").value;
+            const assignClass = document.getElementById("assignClass").value;
+
+            for (const schedule of schedules) {
+                if (schedule.className === assignClass) {
+                    schedule.teacher = teacherName;
+
+                    // Update table
+                    for (let i = 1; i < scheduleTable.rows.length; i++) {
+                        const row = scheduleTable.rows[i];
+                        if (row.cells[0].textContent === assignClass) {
+                            row.cells[3].textContent = teacherName;
+                        }
+                    }
+                    break;
+                }
+            }
+
+            document.getElementById("teacherAssignmentForm").reset();
+        }
+    </script>
+</body>
+</html>
